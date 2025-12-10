@@ -4,7 +4,7 @@ Interactive Algorithmic Feedback Loop Strength Visualization
 
    Interactive tool to measure how recommendation algorithms create feedback loops.
 
-   **Live Demo:** https://yourusername.github.io/feedback-loop-demo/
+   **Live Demo:** https://wrahool007.github.io/feedback-loop-demo/
 
    ## Features
    - User profile selection (profession & platform)
