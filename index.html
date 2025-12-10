@@ -243,6 +243,17 @@
             font-size: 1rem;
             color: var(--white);
             font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .scenario-explanation {
+            font-size: 0.85rem;
+            color: var(--grey-light);
+            background-color: var(--grey-dark);
+            padding: 0.8rem;
+            border-radius: 3px;
+            border-left: 3px solid #cfcfcf;
+            line-height: 1.4;
         }
 
         .choices {
@@ -586,6 +597,7 @@
                 <div class="scenario-box">
                     <div class="scenario-title" id="scenarioNumber"></div>
                     <div class="scenario-text" id="scenarioText"></div>
+                    <div class="scenario-explanation" id="scenarioExplanation"></div>
                 </div>
                 <div class="choices" id="choices"></div>
             </div>
@@ -655,43 +667,48 @@
     <script>
         const scenarios = [
             {
-                title: "Scenario 1: The Search",
-                text: "You search for 'gardening tips' but your feed still shows tech. Do you:",
+                title: "Scenario 1: Search Rebound Effect",
+                text: "You search for 'gardening tips' (a new topic). The algorithm immediately shows you mostly tech content again (your usual interest). What do you do?",
+                explanation: "This tests if the algorithm pulls you back to familiar content when you try to explore something new.",
                 choices: [
-                    { text: "🔍 Keep tech", risky: true, points: 20 },
-                    { text: "🌱 Try gardening", risky: false, points: 0 }
+                    { text: "Accept tech content - it's what I usually watch", risky: true, points: 20 },
+                    { text: "Scroll down to find gardening content instead", risky: false, points: 0 }
                 ]
             },
             {
-                title: "Scenario 2: The Creator",
-                text: "One creator dominates. Do you:",
+                title: "Scenario 2: Creator Dominance",
+                text: "One creator (e.g., a YouTuber) keeps appearing in your recommendations multiple times per day. Their videos are interesting. Do you:",
+                explanation: "This measures if you recognize when one source dominates your feed (a sign of algorithmic narrowing).",
                 choices: [
-                    { text: "👀 Watch all", risky: true, points: 20 },
-                    { text: "🚫 Find others", risky: false, points: 0 }
+                    { text: "Keep watching - they're entertaining", risky: true, points: 20 },
+                    { text: "Actively search for and watch other creators", risky: false, points: 0 }
                 ]
             },
             {
-                title: "Scenario 3: The Emotion",
-                text: "Content triggers emotions. Do you:",
+                title: "Scenario 3: Emotional Triggering",
+                text: "You notice certain types of content (drama, politics, controversy) always appear in your feed and trigger strong emotional reactions (anger, anxiety, excitement). Do you:",
+                explanation: "Algorithms often promote emotionally engaging content because it increases engagement. This tests your awareness.",
                 choices: [
-                    { text: "😤 Engage more", risky: true, points: 20 },
-                    { text: "🧘 Explore new", risky: false, points: 0 }
+                    { text: "Continue watching - emotions feel real", risky: true, points: 20 },
+                    { text: "Deliberately seek calming or neutral content", risky: false, points: 0 }
                 ]
             },
             {
-                title: "Scenario 4: The Echo",
-                text: "Feed seems narrower. Do you:",
+                title: "Scenario 4: Feed Narrowing Over Time",
+                text: "Looking back at your feed from a week ago vs today, you notice it's showing fewer diverse topics and mostly repeating the same themes. Do you:",
+                explanation: "This detects if you notice the algorithmic loop tightening around your interests over time.",
                 choices: [
-                    { text: "😴 Accept it", risky: true, points: 20 },
-                    { text: "🔄 Clear history", risky: false, points: 0 }
+                    { text: "Accept it - the algorithm knows my preferences", risky: true, points: 20 },
+                    { text: "Clear your watch history and search for new topics", risky: false, points: 0 }
                 ]
             },
             {
-                title: "Scenario 5: The Filter",
-                text: "Fewer small creators. Do you:",
+                title: "Scenario 5: Creator Diversity",
+                text: "You realize your feed is mostly filled with large, verified creators and celebrities. Small, independent creators rarely appear. Do you:",
+                explanation: "Algorithms may favor large accounts because they're safer/more popular. This tests awareness of this bias.",
                 choices: [
-                    { text: "⭐ Big accounts", risky: true, points: 20 },
-                    { text: "🌟 Independent", risky: false, points: 0 }
+                    { text: "Trust verified creators - they're reliable", risky: true, points: 20 },
+                    { text: "Actively search for and follow small independent creators", risky: false, points: 0 }
                 ]
             }
         ];
@@ -747,6 +764,7 @@
             const scenario = scenarios[currentScenario];
             document.getElementById('scenarioNumber').textContent = `Question ${currentScenario + 1} / ${scenarios.length}`;
             document.getElementById('scenarioText').textContent = scenario.text;
+            document.getElementById('scenarioExplanation').textContent = `💡 Why this matters: ${scenario.explanation}`;
 
             const choicesDiv = document.getElementById('choices');
             choicesDiv.innerHTML = '';
