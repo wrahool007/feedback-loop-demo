@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check your Algorithmic Feedback Loop Strength</title>
+    <title>Feed Loop Quest - Algorithmic Fairness Game</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +18,6 @@
             --grey-mid: #888888;
             --grey-dark: #333333;
             --font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
@@ -27,26 +26,51 @@
             font-family: var(--font-family);
             font-size: 16px;
             line-height: 1.5;
-            overflow-x: hidden;
         }
 
         header {
             padding: 1.5rem 2rem;
             border-bottom: 1px solid var(--grey-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
             text-align: center;
+            flex: 1;
         }
 
         h1 {
             font-size: 1.8rem;
             font-weight: 600;
             margin-bottom: 0.3rem;
-            letter-spacing: -0.02em;
         }
 
         .subtitle {
             font-size: 0.85rem;
             color: var(--grey-mid);
-            font-weight: 400;
+        }
+
+        .people-counter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            background-color: var(--grey-dark);
+            border-radius: 4px;
+            border: 1px solid var(--grey-mid);
+        }
+
+        .counter-label {
+            font-size: 0.8rem;
+            color: var(--grey-mid);
+            text-transform: uppercase;
+        }
+
+        .counter-value {
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         .container {
@@ -62,12 +86,10 @@
         @media (max-width: 1200px) {
             .container {
                 grid-template-columns: 1fr;
-                gap: 2rem;
-                min-height: auto;
             }
         }
 
-        .questionnaire {
+        .game-section {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
@@ -77,108 +99,199 @@
             font-size: 1rem;
             font-weight: 600;
             color: var(--white);
-            margin-bottom: 0.3rem;
             border-bottom: 2px solid var(--grey-dark);
             padding-bottom: 0.3rem;
         }
 
-        .question-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+        .profile-input {
             padding: 1rem;
             background-color: var(--grey-dark);
             border-radius: 4px;
             border-left: 4px solid var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
 
-        .question-label {
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-label {
             font-weight: 500;
             font-size: 0.9rem;
+        }
+
+        select {
+            padding: 0.6rem;
+            background-color: var(--black);
+            border: 1px solid var(--grey-mid);
             color: var(--white);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .option-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .radio-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .radio-wrapper:hover {
-            color: var(--grey-light);
-        }
-
-        input[type="radio"] {
-            accent-color: var(--white);
-            width: 16px;
-            height: 16px;
+            font-family: var(--font-family);
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        input[type="radio"]:focus {
-            outline: 2px solid var(--white);
-            outline-offset: 2px;
+        select:focus {
+            outline: none;
+            border-color: var(--white);
         }
 
-        .radio-label {
-            cursor: pointer;
-            user-select: none;
-            font-size: 0.85rem;
+        select option {
+            background-color: var(--grey-dark);
+            color: var(--white);
         }
 
         .controls {
             display: flex;
             gap: 1rem;
-            flex-wrap: wrap;
         }
 
-        button {
-            padding: 0.6rem 1.2rem;
+        .btn {
+            padding: 0.8rem 1.5rem;
             background-color: var(--white);
             color: var(--black);
             border: none;
             border-radius: 4px;
             font-weight: 600;
-            font-family: var(--font-family);
             font-size: 0.9rem;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            flex: 1;
         }
 
-        button:hover {
+        .btn:hover {
             background-color: var(--grey-light);
             transform: translateY(-2px);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:focus {
-            outline: 2px solid var(--white);
-            outline-offset: 2px;
-        }
-
-        .btn-secondary {
+        .btn.secondary {
             background-color: var(--grey-dark);
             color: var(--white);
             border: 1px solid var(--grey-mid);
         }
 
-        .btn-secondary:hover {
+        .btn.secondary:hover {
             background-color: var(--grey-mid);
+        }
+
+        .game-board {
+            padding: 1.5rem;
+            background-color: var(--grey-dark);
+            border-radius: 4px;
+            border: 2px solid var(--grey-mid);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-board.hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--grey-dark);
+            border: 2px solid var(--grey-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .progress-dot.active {
+            background-color: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        .progress-dot.completed {
+            background-color: var(--grey-mid);
+            color: var(--white);
+        }
+
+        .scenario-box {
+            background-color: var(--black);
+            padding: 1.5rem;
+            border-radius: 4px;
+            border-left: 4px solid var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .scenario-title {
+            font-size: 0.9rem;
+            color: var(--grey-light);
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .scenario-text {
+            font-size: 1rem;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .choice-btn {
+            padding: 1rem;
+            background-color: var(--white);
+            color: var(--black);
+            border: 2px solid var(--white);
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .choice-btn.risky {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background-color: var(--black);
+        }
+
+        .choice-btn.risky:hover {
+            background-color: #ff6b6b;
+            color: var(--black);
+        }
+
+        .choice-btn.safe {
+            border-color: #51cf66;
+            color: #51cf66;
+            background-color: var(--black);
+        }
+
+        .choice-btn.safe:hover {
+            background-color: #51cf66;
+            color: var(--black);
         }
 
         .privacy-note {
@@ -199,6 +312,42 @@
             display: none;
         }
 
+        .user-info {
+            padding: 1.5rem;
+            background-color: var(--grey-dark);
+            border-radius: 4px;
+            border-left: 4px solid var(--white);
+        }
+
+        .user-info-title {
+            font-size: 0.8rem;
+            color: var(--grey-mid);
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .user-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--grey-dark);
+            font-size: 0.9rem;
+        }
+
+        .user-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-label {
+            color: var(--grey-light);
+            font-weight: 500;
+        }
+
+        .user-value {
+            color: var(--white);
+            font-weight: 600;
+        }
+
         .gauge-container {
             display: flex;
             flex-direction: column;
@@ -213,7 +362,6 @@
             font-size: 0.8rem;
             color: var(--grey-mid);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
         }
 
         .gauge-svg {
@@ -225,13 +373,63 @@
         .gauge-score {
             font-size: 2rem;
             font-weight: 700;
-            color: var(--white);
         }
 
         .gauge-category {
             font-size: 0.95rem;
             color: var(--grey-light);
             font-weight: 500;
+        }
+
+        .gauge-message {
+            font-size: 0.85rem;
+            color: var(--grey-light);
+            text-align: center;
+            line-height: 1.5;
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background-color: var(--black);
+            border-radius: 4px;
+            border-left: 3px solid var(--white);
+        }
+
+        .simulation-container {
+            padding: 1.5rem;
+            background-color: var(--grey-dark);
+            border-radius: 4px;
+        }
+
+        .simulation-title {
+            font-size: 0.8rem;
+            color: var(--grey-mid);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .radial-bars {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            gap: 0.5rem;
+            min-height: 140px;
+        }
+
+        .radial-bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            flex: 1;
+        }
+
+        .radial-bar-svg {
+            width: 100%;
+            height: 120px;
+        }
+
+        .radial-bar-label {
+            font-size: 0.65rem;
+            color: var(--grey-mid);
         }
 
         .interventions-container {
@@ -244,7 +442,6 @@
             font-size: 0.8rem;
             color: var(--grey-mid);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
             margin-bottom: 1rem;
         }
 
@@ -257,6 +454,16 @@
         .btn-intervention {
             padding: 0.6rem 0.75rem;
             font-size: 0.75rem;
+            background-color: var(--grey-dark);
+            color: var(--white);
+            border: 1px solid var(--grey-mid);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-intervention:hover {
+            background-color: var(--grey-mid);
         }
 
         .intervention-feedback {
@@ -286,46 +493,6 @@
             }
         }
 
-        .simulation-container {
-            padding: 1.5rem;
-            background-color: var(--grey-dark);
-            border-radius: 4px;
-        }
-
-        .simulation-title {
-            font-size: 0.8rem;
-            color: var(--grey-mid);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-        }
-
-        .radial-bars {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-end;
-            gap: 0.5rem;
-            min-height: 140px;
-        }
-
-        .radial-bar-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .radial-bar-svg {
-            width: 35px;
-            height: 120px;
-        }
-
-        .radial-bar-label {
-            font-size: 0.65rem;
-            color: var(--grey-mid);
-            text-align: center;
-        }
-
         .contributors-container {
             padding: 1.5rem;
             background-color: var(--grey-dark);
@@ -336,7 +503,6 @@
             font-size: 0.8rem;
             color: var(--grey-mid);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
             margin-bottom: 0.8rem;
         }
 
@@ -347,163 +513,104 @@
             border-left: 3px solid var(--white);
             border-radius: 2px;
             font-size: 0.85rem;
-            line-height: 1.3;
         }
 
-        .contributor-question {
-            color: var(--white);
-            font-weight: 500;
-        }
-
-        @keyframes tighten {
-            0% { transform: scale(1) rotate(0deg); }
-            25% { transform: scale(0.98) rotate(-2deg); }
-            50% { transform: scale(0.96) rotate(2deg); }
-            75% { transform: scale(0.98) rotate(-1deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-
-        .loop-tightening {
-            animation: tighten 0.8s ease-in-out 3;
-        }
-
-        @media (max-width: 1200px) {
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .choices {
+                grid-template-columns: 1fr;
+            }
             .intervention-buttons {
                 grid-template-columns: 1fr;
             }
-
-            .radial-bars {
-                min-height: 120px;
-            }
-        }
-
-        :focus-visible {
-            outline: 2px solid var(--white);
-            outline-offset: 2px;
-        }
-
-        ::selection {
-            background-color: var(--white);
-            color: var(--black);
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Algorithmic Feedback Loop Strength</h1>
-        <p class="subtitle">Measure how algorithms shape your content consumption</p>
+        <div class="header-content">
+            <h1>🎮 Feed Loop Quest</h1>
+            <p class="subtitle">Navigate the algorithm - Discover your feedback loop strength</p>
+        </div>
+        <div class="people-counter">
+            <span class="counter-label">Players</span>
+            <span class="counter-value" id="peopleCount">0</span>
+        </div>
     </header>
 
     <div class="container">
-        <!-- Left: Questionnaire -->
-        <div class="questionnaire">
+        <div class="game-section" id="gameSection">
             <div>
-                <h2 class="section-title">Assessment</h2>
-
-                <!-- Q1 -->
-                <div class="question-group">
-                    <label class="question-label" for="q1-group">
-                        When you search for something different, does the algorithm pull you back to familiar content?
-                    </label>
-                    <div class="option-group" id="q1-group" role="group">
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q1-yes" name="q1" value="yes">
-                            <label class="radio-label" for="q1-yes">Yes</label>
-                        </div>
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q1-no" name="q1" value="no">
-                            <label class="radio-label" for="q1-no">No</label>
-                        </div>
+                <h2 class="section-title">Create Your Profile</h2>
+                <div class="profile-input">
+                    <div class="input-group">
+                        <label class="input-label">Profession:</label>
+                        <select id="profession">
+                            <option value="">-- Select --</option>
+                            <option value="student">Student</option>
+                            <option value="designer">Designer</option>
+                            <option value="developer">Developer</option>
+                            <option value="marketer">Marketer</option>
+                            <option value="educator">Educator</option>
+                            <option value="artist">Artist/Creator</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Platform:</label>
+                        <select id="platform">
+                            <option value="">-- Select --</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="twitter">Twitter/X</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="reddit">Reddit</option>
+                            <option value="twitch">Twitch</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Q2 -->
-                <div class="question-group">
-                    <label class="question-label" for="q2-group">
-                        Does the same creator or topic heavily dominate your feed?
-                    </label>
-                    <div class="option-group" id="q2-group" role="group">
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q2-yes" name="q2" value="yes">
-                            <label class="radio-label" for="q2-yes">Yes</label>
-                        </div>
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q2-no" name="q2" value="no">
-                            <label class="radio-label" for="q2-no">No</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q3 -->
-                <div class="question-group">
-                    <label class="question-label" for="q3-group">
-                        Do you notice emotional reactions triggered by recommendations?
-                    </label>
-                    <div class="option-group" id="q3-group" role="group">
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q3-yes" name="q3" value="yes">
-                            <label class="radio-label" for="q3-yes">Yes</label>
-                        </div>
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q3-no" name="q3" value="no">
-                            <label class="radio-label" for="q3-no">No</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q4 -->
-                <div class="question-group">
-                    <label class="question-label" for="q4-group">
-                        Are you aware that your feed is narrowing what you see?
-                    </label>
-                    <div class="option-group" id="q4-group" role="group">
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q4-yes" name="q4" value="yes">
-                            <label class="radio-label" for="q4-yes">Yes</label>
-                        </div>
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q4-no" name="q4" value="no">
-                            <label class="radio-label" for="q4-no">No</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q5 -->
-                <div class="question-group">
-                    <label class="question-label" for="q5-group">
-                        Do you see fewer small creators or diverse voices than desired?
-                    </label>
-                    <div class="option-group" id="q5-group" role="group">
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q5-yes" name="q5" value="yes">
-                            <label class="radio-label" for="q5-yes">Yes</label>
-                        </div>
-                        <div class="radio-wrapper">
-                            <input type="radio" id="q5-no" name="q5" value="no">
-                            <label class="radio-label" for="q5-no">No</label>
-                        </div>
-                    </div>
+                <div class="controls">
+                    <button class="btn" id="startBtn">Start Quest</button>
+                    <button class="btn secondary" id="resetBtn">Reset</button>
                 </div>
             </div>
 
-            <!-- Controls -->
-            <div class="controls">
-                <button id="computeBtn" aria-label="Compute feedback loop strength">Compute</button>
-                <button id="resetBtn" class="btn-secondary" aria-label="Reset questionnaire">Reset</button>
+            <div class="game-board hidden" id="gameBoard">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="scenario-box">
+                    <div class="scenario-title" id="scenarioNumber"></div>
+                    <div class="scenario-text" id="scenarioText"></div>
+                </div>
+                <div class="choices" id="choices"></div>
             </div>
 
-            <!-- Privacy note -->
             <div class="privacy-note">
                 🔒 No data leaves your browser. All computation is local.
             </div>
         </div>
 
-        <!-- Right: Results & Visualization -->
         <div class="results hidden" id="results">
-            <!-- Gauge -->
+            <div class="user-info">
+                <div class="user-info-title">Your Profile</div>
+                <div class="user-info-item">
+                    <span class="user-label">Profession:</span>
+                    <span class="user-value" id="professionDisplay">—</span>
+                </div>
+                <div class="user-info-item">
+                    <span class="user-label">Platform:</span>
+                    <span class="user-value" id="platformDisplay">—</span>
+                </div>
+            </div>
+
             <div class="gauge-container">
-                <div class="gauge-title">Feedback Loop Strength</div>
-                <svg class="gauge-svg" viewBox="0 0 280 200" role="img" aria-label="Feedback loop strength gauge">
+                <div class="gauge-title">Your Loop Strength</div>
+                <svg class="gauge-svg" viewBox="0 0 280 200">
                     <defs>
                         <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                             <stop offset="0%" style="stop-color:#888888;stop-opacity:0.3" />
@@ -518,92 +625,83 @@
                 </svg>
                 <div class="gauge-score" id="scoreDisplay">0</div>
                 <div class="gauge-category" id="categoryDisplay">—</div>
+                <div class="gauge-message" id="gaugeMessage"></div>
             </div>
 
-            <!-- Interventions -->
             <div class="interventions-container">
                 <div class="interventions-title">Try an Intervention</div>
                 <div class="intervention-buttons">
-                    <button class="btn-intervention btn-secondary" id="diversifyBtn">Diversify</button>
-                    <button class="btn-intervention btn-secondary" id="clearHistoryBtn">Clear History</button>
-                    <button class="btn-intervention btn-secondary" id="followSmallBtn">Follow New</button>
+                    <button class="btn-intervention" id="diversifyBtn">Diversify</button>
+                    <button class="btn-intervention" id="clearHistoryBtn">Clear History</button>
+                    <button class="btn-intervention" id="followSmallBtn">Follow New</button>
                 </div>
                 <div id="interventionFeedback" class="intervention-feedback"></div>
             </div>
 
-            <!-- 7-day simulation -->
             <div class="simulation-container">
                 <div class="simulation-title">Loop Strength Over 7 Days</div>
                 <div class="radial-bars" id="radialBars"></div>
             </div>
 
-            <!-- Contributors -->
             <div class="contributors-container">
-                <div class="contributors-title">Your Loop Indicators</div>
+                <div class="contributors-title">Your Risky Choices</div>
                 <div id="contributorsList"></div>
             </div>
+
+            <button class="btn" id="restartBtn">Play Again</button>
         </div>
     </div>
 
     <script>
+        const scenarios = [
+            {
+                title: "Scenario 1: The Search",
+                text: "You search for 'gardening tips' but your feed still shows tech. Do you:",
+                choices: [
+                    { text: "🔍 Keep tech", risky: true, points: 20 },
+                    { text: "🌱 Try gardening", risky: false, points: 0 }
+                ]
+            },
+            {
+                title: "Scenario 2: The Creator",
+                text: "One creator dominates. Do you:",
+                choices: [
+                    { text: "👀 Watch all", risky: true, points: 20 },
+                    { text: "🚫 Find others", risky: false, points: 0 }
+                ]
+            },
+            {
+                title: "Scenario 3: The Emotion",
+                text: "Content triggers emotions. Do you:",
+                choices: [
+                    { text: "😤 Engage more", risky: true, points: 20 },
+                    { text: "🧘 Explore new", risky: false, points: 0 }
+                ]
+            },
+            {
+                title: "Scenario 4: The Echo",
+                text: "Feed seems narrower. Do you:",
+                choices: [
+                    { text: "😴 Accept it", risky: true, points: 20 },
+                    { text: "🔄 Clear history", risky: false, points: 0 }
+                ]
+            },
+            {
+                title: "Scenario 5: The Filter",
+                text: "Fewer small creators. Do you:",
+                choices: [
+                    { text: "⭐ Big accounts", risky: true, points: 20 },
+                    { text: "🌟 Independent", risky: false, points: 0 }
+                ]
+            }
+        ];
+
         let currentScore = 0;
-        let currentCategory = "";
-        let currentContributors = [];
+        let currentScenario = 0;
+        let currentProfession = "";
+        let currentPlatform = "";
         let currentHistory = [];
-
-        class SeededRNG {
-            constructor(seed) {
-                this.seed = seed;
-            }
-            next() {
-                this.seed = (this.seed * 9301 + 49297) % 233280;
-                return this.seed / 233280;
-            }
-        }
-
-        function animateValue(element, start, end, duration = 1000) {
-            const startTime = performance.now();
-            const animate = (currentTime) => {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                const value = Math.round(start + (end - start) * easeOut);
-                element.textContent = value;
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                }
-            };
-            requestAnimationFrame(animate);
-        }
-
-        function computeScore(answers) {
-            let score = 0;
-            const contributors = [];
-            const labels = {
-                'q1': 'Algorithm pulls you back to familiar content',
-                'q2': 'Same topic/creator heavily dominates',
-                'q3': 'Emotional reactions to recommendations',
-                'q4': 'Aware feed is narrowing exposure',
-                'q5': 'Limited exposure to small creators'
-            };
-
-            for (let i = 1; i <= 5; i++) {
-                if (answers[`q${i}`] === 'yes') {
-                    score += 20;
-                    contributors.push({
-                        question: i,
-                        text: labels[`q${i}`]
-                    });
-                }
-            }
-
-            const category = getCategory(score);
-            return {
-                score: Math.min(score, 100),
-                category,
-                contributors: contributors.slice(0, 3)
-            };
-        }
+        let peopleCount = localStorage.getItem('peopleCount') ? parseInt(localStorage.getItem('peopleCount')) : 0;
 
         function getCategory(score) {
             if (score >= 81) return 'Very High';
@@ -613,22 +711,106 @@
             return 'Very Low';
         }
 
+        function getLoopMessage(score) {
+            if (score === 0) {
+                return "🎉 Excellent! You have complete control. You actively diversify and resist algorithms. Keep it up!";
+            } else if (score <= 20) {
+                return "✅ Great! Strong control on your loop. Your choices show awareness. Congratulations!";
+            } else if (score <= 40) {
+                return "📊 Good balance. Moderately affected but making conscious choices. Keep exploring!";
+            } else if (score <= 60) {
+                return "⚠️ Moderate loop detected. Algorithm has influence. Clear history and diversify to break the pattern.";
+            } else if (score <= 80) {
+                return "🔴 Strong loop! Feed is narrowing. Diversify aggressively and follow new creators now.";
+            } else {
+                return "🚨 Very strong loop! Heavily trapped. Take action: clear history, diversify, follow independents!";
+            }
+        }
+
+        function getProfessionLabel(value) {
+            const labels = {
+                'student': 'Student', 'designer': 'Designer', 'developer': 'Developer',
+                'marketer': 'Marketer', 'educator': 'Educator', 'artist': 'Artist/Creator', 'other': 'Other'
+            };
+            return labels[value] || 'Not specified';
+        }
+
+        function getPlatformLabel(value) {
+            const labels = {
+                'youtube': 'YouTube', 'tiktok': 'TikTok', 'instagram': 'Instagram', 'facebook': 'Facebook',
+                'twitter': 'Twitter/X', 'linkedin': 'LinkedIn', 'reddit': 'Reddit', 'twitch': 'Twitch'
+            };
+            return labels[value] || 'Not specified';
+        }
+
+        function renderScenario() {
+            const scenario = scenarios[currentScenario];
+            document.getElementById('scenarioNumber').textContent = `Question ${currentScenario + 1} / ${scenarios.length}`;
+            document.getElementById('scenarioText').textContent = scenario.text;
+
+            const choicesDiv = document.getElementById('choices');
+            choicesDiv.innerHTML = '';
+            scenario.choices.forEach((choice) => {
+                const btn = document.createElement('button');
+                btn.className = `choice-btn ${choice.risky ? 'risky' : 'safe'}`;
+                btn.textContent = choice.text;
+                btn.addEventListener('click', () => selectChoice(choice.points));
+                choicesDiv.appendChild(btn);
+            });
+
+            renderProgressBar();
+        }
+
+        function renderProgressBar() {
+            const progressDiv = document.getElementById('progressBar');
+            progressDiv.innerHTML = '';
+            for (let i = 0; i < scenarios.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                if (i < currentScenario) {
+                    dot.className += ' completed';
+                } else if (i === currentScenario) {
+                    dot.className += ' active';
+                }
+                dot.textContent = i + 1;
+                progressDiv.appendChild(dot);
+            }
+        }
+
+        function selectChoice(points) {
+            currentScore += points;
+            currentScenario++;
+
+            if (currentScenario < scenarios.length) {
+                renderScenario();
+            } else {
+                finishGame();
+            }
+        }
+
         function simulateHistory(score) {
-            const rng = new SeededRNG(score + Date.now() % 1000);
             const history = [];
-            
             for (let day = 1; day <= 7; day++) {
                 if (day === 7) {
                     history.push(score);
                 } else {
-                    const daysBack = 7 - day;
-                    const variation = Math.floor(rng.next() * 15);
-                    const dayScore = Math.max(0, score - (daysBack * 8) - variation);
-                    history.push(dayScore);
+                    const decay = (7 - day) * Math.floor(Math.random() * 8);
+                    history.push(Math.max(0, score - decay));
                 }
             }
-            
             return history;
+        }
+
+        function animateValue(element, start, end, duration = 1000) {
+            const startTime = performance.now();
+            const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const value = Math.round(start + (end - start) * progress);
+                element.textContent = value;
+                if (progress < 1) requestAnimationFrame(animate);
+            };
+            requestAnimationFrame(animate);
         }
 
         function animateGauge(score) {
@@ -636,111 +818,78 @@
             const totalLength = 314;
             const percentage = score / 100;
             const filledLength = totalLength * percentage;
-            
             const startTime = performance.now();
             const duration = 1500;
 
             const animate = (currentTime) => {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                const currentLength = filledLength * easeOut;
+                const currentLength = filledLength * progress;
                 gaugeElement.setAttribute('stroke-dasharray', `${currentLength} ${totalLength}`);
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                }
+                if (progress < 1) requestAnimationFrame(animate);
             };
-
             requestAnimationFrame(animate);
         }
 
         function drawRadialBars(history) {
             const container = document.getElementById('radialBars');
             container.innerHTML = '';
-
             history.forEach((value, index) => {
-                const day = index + 1;
                 const heightPercent = (value / 100) * 100;
-                
                 const item = document.createElement('div');
                 item.className = 'radial-bar-item';
-                
                 const svg = `
-                    <svg class="radial-bar-svg" viewBox="0 0 40 140" role="presentation">
+                    <svg class="radial-bar-svg" viewBox="0 0 40 140">
                         <rect x="12" y="10" width="16" height="120" fill="none" stroke="#333333" stroke-width="2" rx="2" />
-                        <rect x="12" y="${140 - (120 * heightPercent / 100)}" width="16" height="${120 * heightPercent / 100}" 
-                              fill="#ffffff" opacity="0.7" rx="2" />
+                        <rect x="12" y="${140 - (120 * heightPercent / 100)}" width="16" height="${120 * heightPercent / 100}" fill="#ffffff" opacity="0.7" rx="2" />
                         <text x="20" y="135" font-size="10" fill="#888888" text-anchor="middle">${Math.round(value)}</text>
                     </svg>
-                    <div class="radial-bar-label">D${day}</div>
+                    <div class="radial-bar-label">D${index + 1}</div>
                 `;
-                
                 item.innerHTML = svg;
                 container.appendChild(item);
             });
         }
 
-        function drawContributors(contributors) {
+        function drawContributors() {
             const container = document.getElementById('contributorsList');
+            const riskyChoices = ['Stayed with familiar', 'Watched same creator', 'Engaged emotions', 'Accepted narrow', 'Used big accounts'];
             container.innerHTML = '';
-
-            if (contributors.length === 0) {
-                container.innerHTML = '<div style="color: var(--grey-mid); font-size: 0.85rem;">No significant loop indicators detected.</div>';
+            if (currentScore === 0) {
+                container.innerHTML = '<div style="color: var(--grey-mid);">Safe choices! Low loop strength.</div>';
                 return;
             }
-
-            contributors.forEach((contrib, index) => {
+            const numChoices = Math.ceil(currentScore / 20);
+            for (let i = 0; i < numChoices && i < 5; i++) {
                 const item = document.createElement('div');
                 item.className = 'contributor-item';
-                item.innerHTML = `
-                    <div class="contributor-question">${contrib.text}</div>
-                `;
+                item.innerHTML = `⚠️ ${riskyChoices[i]}`;
                 container.appendChild(item);
-            });
+            }
         }
 
-        function showResults(result) {
-            currentScore = result.score;
-            currentCategory = result.category;
-            currentContributors = result.contributors;
-            currentHistory = simulateHistory(result.score);
+        function finishGame() {
+            currentScore = Math.min(currentScore, 100);
+            document.getElementById('gameSection').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
 
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.classList.remove('hidden');
+            document.getElementById('professionDisplay').textContent = getProfessionLabel(currentProfession);
+            document.getElementById('platformDisplay').textContent = getPlatformLabel(currentPlatform);
 
-            animateGauge(result.score);
-            animateValue(document.getElementById('scoreDisplay'), 0, result.score, 1500);
-            
+            animateGauge(currentScore);
+            animateValue(document.getElementById('scoreDisplay'), 0, currentScore, 1500);
             setTimeout(() => {
-                document.getElementById('categoryDisplay').textContent = result.category;
+                document.getElementById('categoryDisplay').textContent = getCategory(currentScore);
+                document.getElementById('gaugeMessage').textContent = getLoopMessage(currentScore);
             }, 500);
 
+            currentHistory = simulateHistory(currentScore);
             drawRadialBars(currentHistory);
-            drawContributors(result.contributors);
+            drawContributors();
 
-            if (result.score >= 81) {
-                document.querySelector('.gauge-svg').classList.add('loop-tightening');
-            }
-        }
-
-        function getAnswers() {
-            const answers = {};
-            for (let i = 1; i <= 5; i++) {
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                answers[`q${i}`] = selected ? selected.value : null;
-            }
-            return answers;
-        }
-
-        function validateAnswers(answers) {
-            for (let i = 1; i <= 5; i++) {
-                if (answers[`q${i}`] === null) {
-                    alert(`Please answer Question ${i}`);
-                    return false;
-                }
-            }
-            return true;
+            peopleCount++;
+            localStorage.setItem('peopleCount', peopleCount);
+            document.getElementById('peopleCount').textContent = peopleCount;
         }
 
         function applyIntervention(reduction, label) {
@@ -748,51 +897,43 @@
             newScore = Math.min(newScore, 100);
 
             const feedback = document.getElementById('interventionFeedback');
-            feedback.textContent = `✓ ${label} applied. Strength reduced by ${reduction} pts.`;
+            feedback.textContent = `✓ ${label} - Reduced by ${reduction} pts!`;
             feedback.classList.add('show');
 
             document.getElementById('scoreDisplay').textContent = newScore;
             document.getElementById('categoryDisplay').textContent = getCategory(newScore);
-
+            document.getElementById('gaugeMessage').textContent = getLoopMessage(newScore);
             animateGauge(newScore);
 
             currentHistory = simulateHistory(newScore);
             drawRadialBars(currentHistory);
-
             currentScore = newScore;
 
-            setTimeout(() => {
-                feedback.classList.remove('show');
-            }, 3000);
+            setTimeout(() => feedback.classList.remove('show'), 3000);
         }
 
-        document.getElementById('computeBtn').addEventListener('click', () => {
-            const answers = getAnswers();
-            if (validateAnswers(answers)) {
-                const result = computeScore(answers);
-                showResults(result);
+        document.getElementById('startBtn').addEventListener('click', () => {
+            const prof = document.getElementById('profession').value;
+            const plat = document.getElementById('platform').value;
+            if (!prof || !plat) {
+                alert('Please select profession and platform!');
+                return;
             }
+            currentProfession = prof;
+            currentPlatform = plat;
+            currentScore = 0;
+            currentScenario = 0;
+            document.getElementById('gameBoard').classList.remove('hidden');
+            renderScenario();
         });
 
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('interventionFeedback').classList.remove('show');
-        });
+        document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+        document.getElementById('restartBtn').addEventListener('click', () => location.reload());
+        document.getElementById('diversifyBtn').addEventListener('click', () => applyIntervention(15, 'Diversify'));
+        document.getElementById('clearHistoryBtn').addEventListener('click', () => applyIntervention(25, 'Clear History'));
+        document.getElementById('followSmallBtn').addEventListener('click', () => applyIntervention(10, 'Follow New'));
 
-        document.getElementById('diversifyBtn').addEventListener('click', () => {
-            applyIntervention(15, 'Diversify');
-        });
-
-        document.getElementById('clearHistoryBtn').addEventListener('click', () => {
-            applyIntervention(25, 'Clear History');
-        });
-
-        document.getElementById('followSmallBtn').addEventListener('click', () => {
-            applyIntervention(10, 'Follow New');
-        });
-
-        document.getElementById('results').classList.add('hidden');
+        document.getElementById('peopleCount').textContent = peopleCount;
     </script>
 </body>
 </html>
